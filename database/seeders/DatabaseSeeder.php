@@ -15,7 +15,7 @@ class DatabaseSeeder extends Seeder
         \App\Models\User::factory()->count(5)->create([
     'email_verified_at' => now() // メール認証済みにする
 ]);
-    $this->call(PostSeeder::class);
+    $this->call(BoardSeeder::class);
 
     }
 }

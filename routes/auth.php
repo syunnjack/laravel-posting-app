@@ -12,10 +12,11 @@ use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
-    Route::get('register', [RegisteredUserController::class, 'create'])
-                ->name('register');
-
-    Route::post('register', [RegisteredUserController::class, 'store']);
+    // このサイトは運営者のみがログインするため、一般公開の新規登録は無効化している。
+    // 運営者アカウントは `php artisan tinker` で is_admin=true として直接作成する。
+    // Route::get('register', [RegisteredUserController::class, 'create'])
+    //             ->name('register');
+    // Route::post('register', [RegisteredUserController::class, 'store']);
 
     Route::get('login', [AuthenticatedSessionController::class, 'create'])
                 ->name('login');
