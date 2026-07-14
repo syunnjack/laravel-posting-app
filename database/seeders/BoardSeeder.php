@@ -20,6 +20,8 @@ class BoardSeeder extends Seeder
             ['name' => '質問・雑学', 'slug' => 'question-trivia', 'description' => '疑問・雑学を投稿・回答する板です。', 'position' => 8],
             ['name' => '趣味', 'slug' => 'hobby', 'description' => '趣味全般について語る板です。', 'position' => 9],
             ['name' => '暇つぶし', 'slug' => 'himatsubushi', 'description' => '気軽な暇つぶし雑談板です。', 'position' => 10],
+            ['name' => '資格試験受験生', 'slug' => 'qualification-exam', 'description' => '資格試験の勉強法・進捗報告・情報交換をする板です。', 'position' => 11],
+            ['name' => '転職・退職愚痴', 'slug' => 'job-complaints', 'description' => '転職・退職・職場の愚痴を匿名で吐き出せる板です。', 'position' => 12],
         ];
 
         foreach ($boards as $board) {
