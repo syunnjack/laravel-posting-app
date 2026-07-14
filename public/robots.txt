@@ -3,4 +3,4 @@ Disallow: /moderation
 Disallow: /dashboard
 Disallow: /profile
 
-Sitemap: https://laravel-posting-app.example.com/sitemap.xml
+Sitemap: https://yorozu-bbs.jp/sitemap.xml
