@@ -31,4 +31,9 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+
+    'ga4' => [
+        'id' => env('GA4_MEASUREMENT_ID'),
+    ],
+
 ];
