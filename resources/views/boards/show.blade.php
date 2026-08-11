@@ -36,23 +36,38 @@
     <a href="{{ route('boards.index') }}" class="text-decoration-none">{{ config('app.name') }}</a> &gt; {{ $board->name }}
   </nav>
 
-  <div class="d-flex justify-content-between align-items-center mb-3">
+  <div class="d-flex justify-content-between align-items-center mb-2">
     <h1 class="h4 fw-bold mb-0">{{ $board->name }}</h1>
-    <a href="{{ route('threads.create', $board) }}" class="btn btn-danger">➕ 新規スレッド作成</a>
+    <a href="{{ route('threads.create', $board) }}" class="btn btn-danger">➕ 新規スレッド</a>
   </div>
-  <p class="text-muted small">{{ $board->description }}</p>
+  <p class="text-muted small mb-3">{{ $board->description }}</p>
+
+  {{-- 板内検索 --}}
+  <form method="GET" class="mb-3 d-flex gap-2">
+    <input type="search" name="q" value="{{ request('q') }}" class="form-control form-control-sm" placeholder="スレッドを検索…" style="max-width:260px;">
+    <button type="submit" class="btn btn-sm btn-outline-secondary">検索</button>
+    @if(request('q'))<a href="{{ route('boards.show', $board) }}" class="btn btn-sm btn-outline-secondary">クリア</a>@endif
+  </form>
 
   <div class="list-group">
     @forelse ($threads as $thread)
+      @php $isNew = $thread->last_posted_at && $thread->last_posted_at->gt(now()->subHours(3)); @endphp
       <a href="{{ route('threads.show', [$board, $thread]) }}" class="list-group-item list-group-item-action">
-        <div class="d-flex justify-content-between">
-          <span class="fw-semibold">{{ $thread->title }}</span>
-          <span class="text-muted small">{{ $thread->reply_count }} レス</span>
+        <div class="d-flex justify-content-between align-items-start">
+          <span class="fw-semibold me-2">
+            @if($isNew)<span class="badge bg-danger me-1" style="font-size:.65rem;">NEW</span>@endif
+            {{ $thread->title }}
+          </span>
+          <span class="text-muted small text-nowrap">{{ $thread->reply_count }} レス</span>
         </div>
         <small class="text-muted">最終更新: {{ optional($thread->last_posted_at)->diffForHumans() }}</small>
       </a>
     @empty
-      <p class="text-muted">まだスレッドがありません。最初のスレッドを立ててみましょう。</p>
+      @if(request('q'))
+        <p class="text-muted p-3 mb-0">「{{ request('q') }}」に一致するスレッドは見つかりませんでした。</p>
+      @else
+        <p class="text-muted p-3 mb-0">まだスレッドがありません。最初のスレッドを立ててみましょう。</p>
+      @endif
     @endforelse
   </div>
 

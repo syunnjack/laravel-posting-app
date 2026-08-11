@@ -15,9 +15,13 @@ class BoardController extends Controller
 
     public function show(Board $board)
     {
-        $threads = $board->threads()
-            ->orderByDesc('last_posted_at')
-            ->paginate(20);
+        $query = $board->threads()->orderByDesc('last_posted_at');
+
+        if ($q = request('q')) {
+            $query->where('title', 'like', '%' . $q . '%');
+        }
+
+        $threads = $query->paginate(30)->withQueryString();
 
         return view('boards.show', compact('board', 'threads'));
     }
