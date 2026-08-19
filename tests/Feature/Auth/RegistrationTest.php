@@ -2,7 +2,6 @@
 
 namespace Tests\Feature\Auth;
 
-use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -10,23 +9,24 @@ class RegistrationTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_registration_screen_can_be_rendered(): void
+    /**
+     * この掲示板は匿名で書き込めるので、利用者の登録は行わない。
+     * ログインは運営者（モデレーション）専用で、routes/auth.php の
+     * 登録ルートは意図的に閉じてある。開いてしまうと誰でも管理画面の
+     * 入口にアカウントを作れてしまうため、閉じたままであることを試験する。
+     */
+    public function test_利用者の新規登録は閉じている(): void
     {
-        $response = $this->get('/register');
+        $this->get('/register')->assertNotFound();
 
-        $response->assertStatus(200);
-    }
-
-    public function test_new_users_can_register(): void
-    {
-        $response = $this->post('/register', [
+        $this->post('/register', [
             'name' => 'Test User',
             'email' => 'test@example.com',
             'password' => 'password',
             'password_confirmation' => 'password',
-        ]);
+        ])->assertNotFound();
 
-        $this->assertAuthenticated();
-        $response->assertRedirect(RouteServiceProvider::HOME);
+        $this->assertGuest();
+        $this->assertDatabaseCount('users', 0);
     }
 }

@@ -46,7 +46,7 @@
 
   <div class="row g-3">
     @foreach ($boards as $board)
-      @php $latestThread = $board->threads()->latest('last_posted_at')->first(); @endphp
+      @php $latestThread = $board->latestThread; @endphp
       <div class="col-md-6">
         <a href="{{ route('boards.show', $board) }}" class="card text-decoration-none shadow-sm h-100 border-0">
           <div class="card-body">
@@ -60,6 +60,8 @@
                 🕐 <span class="text-dark">{{ Str::limit($latestThread->title, 28) }}</span>
                 <span class="ms-1">{{ optional($latestThread->last_posted_at)->diffForHumans() }}</span>
               </p>
+            @else
+              <p class="mb-0 small text-muted">まだスレッドがありません。最初の1つを立ててみてください。</p>
             @endif
           </div>
         </a>

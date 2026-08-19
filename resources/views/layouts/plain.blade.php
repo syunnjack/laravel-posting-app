@@ -12,13 +12,27 @@
 
   <title>@yield('title', config('app.name') . ' | 匿名掲示板')</title>
   <meta name="description" content="@yield('description', config('app.name') . 'は、誰でも匿名でスレッドを立てたり返信したりできる無料の掲示板です。雑談・ニュース・趣味など幅広い話題の板を用意しています。')">
-  <link rel="canonical" href="{{ url()->current() }}">
+  @php
+      // url()->current() はクエリを落とすため、2ページ目以降が1ページ目を
+      // 正規URLとして申告してしまう。内容が変わる page だけを残す。
+      $canonicalQuery = array_filter(request()->only(['page']), fn ($value) => $value !== null && $value !== '' && $value !== '1');
+      $canonicalUrl = url()->current() . ($canonicalQuery ? '?' . http_build_query($canonicalQuery) : '');
+
+      // 板内検索の結果と、投稿フォームなどの操作用ページは検索結果に出す意味が無い。
+      // リンクはたどってほしいので follow は残す。
+      $noindexRoutes = ['threads.create', 'reports.remove-request'];
+      $isNoindex = request()->filled('q') || in_array(request()->route()?->getName(), $noindexRoutes, true);
+  @endphp
+  @if ($isNoindex)
+  <meta name="robots" content="noindex,follow">
+  @endif
+  <link rel="canonical" href="{{ $canonicalUrl }}">
 
   <meta property="og:site_name" content="{{ config('app.name') }}">
   <meta property="og:type" content="website">
   <meta property="og:title" content="@yield('title', config('app.name') . ' | 匿名掲示板')">
   <meta property="og:description" content="@yield('description', config('app.name') . 'は、誰でも匿名でスレッドを立てたり返信したりできる無料の掲示板です。雑談・ニュース・趣味など幅広い話題の板を用意しています。')">
-  <meta property="og:url" content="{{ url()->current() }}">
+  <meta property="og:url" content="{{ $canonicalUrl }}">
   <meta property="og:locale" content="ja_JP">
 
   <meta name="twitter:card" content="summary">

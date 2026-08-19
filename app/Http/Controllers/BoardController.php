@@ -8,7 +8,7 @@ class BoardController extends Controller
 {
     public function index()
     {
-        $boards = Board::withCount('threads')->orderBy('position')->get();
+        $boards = Board::withCount('threads')->with('latestThread')->orderBy('position')->get();
 
         return view('boards.index', compact('boards'));
     }

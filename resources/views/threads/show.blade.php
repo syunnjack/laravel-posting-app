@@ -129,6 +129,7 @@
       </div>
       <textarea name="body" id="post-body" rows="4" class="form-control mb-2" maxlength="2000" required minlength="1" placeholder="レスを入力（Ctrl+Enterで送信）">{{ old('body') }}</textarea>
       <div id="preview-area" class="border rounded bg-white p-2 mb-2 small post-body" style="display:none;min-height:40px;white-space:pre-wrap;word-break:break-word;"></div>
+      <p class="text-muted small mb-2">リンクは1つの投稿につき2つまで貼れます。URLだけの投稿はできません。</p>
       <div class="d-flex gap-2">
         <button type="submit" class="btn btn-dark">送信</button>
         <button type="button" class="btn btn-outline-secondary" onclick="togglePreview()">プレビュー</button>
@@ -156,7 +157,7 @@ document.querySelectorAll('.post-body[data-body]').forEach(el => {
   let html = el.dataset.body
     .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
     .replace(/>>(\d+)/g, (_, n) => `<a href="#post-${n}" class="quote-ref">&gt;&gt;${n}</a>`)
-    .replace(/(https?:\/\/[^\s"<>（）【】]+)/g, url => `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`);
+    .replace(/(https?:\/\/[^\s"<>（）【】]+)/g, url => `<a href="${url}" target="_blank" rel="ugc nofollow noopener noreferrer">${url}</a>`);
   el.innerHTML = html;
 });
 
@@ -191,7 +192,7 @@ function togglePreview() {
     let html = body.value
       .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
       .replace(/>>(\d+)/g, (_, n) => `<a href="#post-${n}" class="quote-ref">&gt;&gt;${n}</a>`)
-      .replace(/(https?:\/\/[^\s"<>（）【】]+)/g, url => `<a href="${url}" target="_blank" rel="noopener">${url}</a>`);
+      .replace(/(https?:\/\/[^\s"<>（）【】]+)/g, url => `<a href="${url}" target="_blank" rel="ugc nofollow noopener noreferrer">${url}</a>`);
     area.innerHTML = html || '<span class="text-muted">（本文を入力してください）</span>';
     area.style.display = 'block';
   } else {

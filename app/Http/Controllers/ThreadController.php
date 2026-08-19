@@ -34,6 +34,10 @@ class ThreadController extends Controller
             return back()->withErrors(['body' => '投稿内容に不適切な可能性のある表現が含まれています。内容をご確認のうえ再度投稿してください。'])->withInput();
         }
 
+        if (ContentModeration::isLinkSpam($validated['title'] . ' ' . $validated['body'])) {
+            return back()->withErrors(['body' => 'リンクは1つの投稿につき'.ContentModeration::maxLinks().'つまでです。URLだけの投稿もご遠慮ください。'])->withInput();
+        }
+
         $ipHash = ContentModeration::clientIpHash($request);
         if (ContentModeration::isTooSoon("thread_create:{$ipHash}", 45)) {
             return back()->withErrors(['body' => '投稿間隔が短すぎます。しばらく待ってから再度お試しください。'])->withInput();
