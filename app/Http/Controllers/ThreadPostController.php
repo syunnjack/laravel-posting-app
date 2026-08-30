@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Board;
 use App\Models\Thread;
 use App\Support\ContentModeration;
-use App\Support\TripCode;
+use App\Support\PostName;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -40,7 +40,7 @@ class ThreadPostController extends Controller
             return back()->withErrors(['body' => '投稿間隔が短すぎます。しばらく待ってから再度お試しください。'])->withInput();
         }
 
-        [$name, $trip] = $this->parseName($validated['name'] ?? '');
+        [$name, $trip] = PostName::parse($validated['name'] ?? '');
 
         // sage は「スレッドを上げない」という意味。チェックされていたら
         // last_posted_at を更新せず、板の並び順を変えない。
@@ -75,22 +75,5 @@ class ThreadPostController extends Controller
         });
 
         return redirect(route('threads.show', [$board, $thread]) . '#post-' . $number);
-    }
-
-    /**
-     * @return array{0: ?string, 1: ?string}
-     */
-    private function parseName(?string $raw): array
-    {
-        $raw = trim((string) $raw);
-        if ($raw === '') {
-            return [null, null];
-        }
-
-        $parts = preg_split('/[#＃]/u', $raw, 2);
-        $name = $parts[0] !== '' ? $parts[0] : null;
-        $trip = isset($parts[1]) && $parts[1] !== '' ? TripCode::generate($parts[1]) : null;
-
-        return [$name, $trip];
     }
 }
