@@ -13,7 +13,18 @@ class Board extends Model
         'slug',
         'description',
         'position',
+        'is_adult',
     ];
+
+    protected $casts = [
+        'is_adult' => 'boolean',
+    ];
+
+    /** 全年齢向けの板だけ。板の一覧と sitemap はこれを使う。 */
+    public function scopeGeneral($query)
+    {
+        return $query->where('is_adult', false);
+    }
 
     public function getRouteKeyName(): string
     {

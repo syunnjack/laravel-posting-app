@@ -13,6 +13,11 @@ class ThreadPostController extends Controller
 {
     public function store(Request $request, Board $board, Thread $thread)
     {
+        // 成人向けの板は、年齢確認を通していなければ返信できない。
+        if ($board->is_adult && ! $request->session()->get('age_verified')) {
+            return redirect()->route('age-check', ['to' => $board->slug]);
+        }
+
         if ($thread->is_locked) {
             return back()->withErrors(['body' => 'このスレッドはロックされているため返信できません。']);
         }

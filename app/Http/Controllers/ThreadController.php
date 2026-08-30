@@ -12,13 +12,23 @@ use Illuminate\Support\Facades\DB;
 
 class ThreadController extends Controller
 {
-    public function create(Board $board)
+    public function create(Request $request, Board $board)
     {
+        // 成人向けの板は、年齢確認を通していなければ入れない。
+        if ($board->is_adult && ! $request->session()->get('age_verified')) {
+            return redirect()->route('age-check', ['to' => $board->slug]);
+        }
+
         return view('threads.create', compact('board'));
     }
 
     public function store(Request $request, Board $board)
     {
+        // 成人向けの板は、年齢確認を通していなければ入れない。
+        if ($board->is_adult && ! $request->session()->get('age_verified')) {
+            return redirect()->route('age-check', ['to' => $board->slug]);
+        }
+
         // ハニーポット: ボットはこの隠しフィールドを埋めてしまう
         if (! empty($request->input('website'))) {
             return redirect()->route('boards.show', $board);
@@ -70,6 +80,11 @@ class ThreadController extends Controller
 
     public function show(Board $board, Thread $thread)
     {
+        // URL を直接開かれても、年齢確認を通していなければ読めないようにする。
+        if ($board->is_adult && ! request()->session()->get('age_verified')) {
+            return redirect()->route('age-check', ['to' => $board->slug]);
+        }
+
         $posts = $thread->posts()->paginate(50);
 
         return view('threads.show', compact('board', 'thread', 'posts'));

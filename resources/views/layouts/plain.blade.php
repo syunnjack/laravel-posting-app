@@ -20,8 +20,14 @@
 
       // 板内検索の結果と、投稿フォームなどの操作用ページは検索結果に出す意味が無い。
       // リンクはたどってほしいので follow は残す。
-      $noindexRoutes = ['threads.create', 'reports.remove-request'];
-      $isNoindex = request()->filled('q') || in_array(request()->route()?->getName(), $noindexRoutes, true);
+      $noindexRoutes = ['threads.create', 'reports.remove-request', 'age-check'];
+      // 成人向けの板とそのスレッドは検索結果に出さない。
+      // ビューに渡っている board、または thread 経由の board を見る。
+      $currentBoard = ($board ?? null) ?: (($thread ?? null)?->board ?? null);
+      $isAdultPage = (bool) ($currentBoard?->is_adult);
+      $isNoindex = $isAdultPage
+        || request()->filled('q')
+        || in_array(request()->route()?->getName(), $noindexRoutes, true);
   @endphp
   @if ($isNoindex)
   <meta name="robots" content="noindex,follow">
