@@ -5,6 +5,24 @@
 
     RewriteEngine On
 
+    # 正規URLへ寄せる。
+    #
+    # http / https、www あり / なしの4通りがすべて 200 を返しており、
+    # Search Console が「Duplicate, Google chose different canonical than
+    # user」（重複。指定と違うURLを正規とみなした）を返してトップが
+    # 索引されていなかった。canonical タグだけでは Google が従わないことが
+    # あるので、サーバ側で1つに寄せる。
+    #
+    # HTTPS 判定は %{HTTPS} だけだと、TLS終端が前段にある構成で常に off に
+    # なることがある。X-Forwarded-Proto も見て、どちらでも https と分かる
+    # 場合はリダイレクトしない。
+    RewriteCond %{HTTP:X-Forwarded-Proto} !=https
+    RewriteCond %{HTTPS} !=on
+    RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+    RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+    RewriteRule ^ https://%1%{REQUEST_URI} [L,R=301]
+
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
