@@ -6,7 +6,7 @@ use App\Models\Board;
 use App\Models\Thread;
 use App\Models\ThreadPost;
 use App\Support\ContentModeration;
-use App\Support\TripCode;
+use App\Support\PostName;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -43,7 +43,7 @@ class ThreadController extends Controller
             return back()->withErrors(['body' => '投稿間隔が短すぎます。しばらく待ってから再度お試しください。'])->withInput();
         }
 
-        [$name, $trip] = $this->parseName($validated['name'] ?? '');
+        [$name, $trip] = PostName::parse($validated['name'] ?? '');
 
         $thread = DB::transaction(function () use ($board, $validated, $name, $trip, $request) {
             $thread = $board->threads()->create([
@@ -73,24 +73,5 @@ class ThreadController extends Controller
         $posts = $thread->posts()->paginate(50);
 
         return view('threads.show', compact('board', 'thread', 'posts'));
-    }
-
-    /**
-     * 名前欄を「名前#トリップ用秘密鍵」の形式でパースする。
-     *
-     * @return array{0: ?string, 1: ?string}
-     */
-    private function parseName(?string $raw): array
-    {
-        $raw = trim((string) $raw);
-        if ($raw === '') {
-            return [null, null];
-        }
-
-        $parts = preg_split('/[#＃]/u', $raw, 2);
-        $name = $parts[0] !== '' ? $parts[0] : null;
-        $trip = isset($parts[1]) && $parts[1] !== '' ? TripCode::generate($parts[1]) : null;
-
-        return [$name, $trip];
     }
 }
