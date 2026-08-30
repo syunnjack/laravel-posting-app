@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AgeCheckController;
 use App\Http\Controllers\BoardController;
 use App\Http\Controllers\ModerationController;
 use App\Http\Controllers\ProfileController;
@@ -27,6 +28,10 @@ Route::view('/about', 'about')->name('about');
 Route::get('/remove-request', [ReportController::class, 'createRemovalRequest'])->name('reports.remove-request');
 Route::post('/remove-request', [ReportController::class, 'storeRemovalRequest'])->name('reports.remove-request.store')->middleware('throttle:5,1');
 Route::get('/sitemap.xml', [BoardController::class, 'sitemap'])->name('sitemap');
+
+// 成人向けの板に入る前の年齢確認。結果はセッションにだけ持つ。
+Route::get('/age-check', [AgeCheckController::class, 'show'])->name('age-check');
+Route::post('/age-check', [AgeCheckController::class, 'confirm'])->name('age-check.confirm');
 
 Route::prefix('boards')->group(function () {
     Route::get('/{board:slug}', [BoardController::class, 'show'])->name('boards.show');
