@@ -22,6 +22,8 @@ class BoardSeeder extends Seeder
             ['name' => '暇つぶし', 'slug' => 'himatsubushi', 'description' => '気軽な暇つぶし雑談板です。', 'position' => 10],
             ['name' => '資格試験受験生', 'slug' => 'qualification-exam', 'description' => '資格試験の勉強法・進捗報告・情報交換をする板です。', 'position' => 11],
             ['name' => '転職・退職愚痴', 'slug' => 'job-complaints', 'description' => '転職・退職・職場の愚痴を匿名で吐き出せる板です。', 'position' => 12],
+            // 芸能・エンタメ板は番組や配信の話が中心なので、人物について語る板は分けた。
+            ['name' => '好きなモデル・女優・アイドル', 'slug' => 'idol-model', 'description' => 'モデル・女優・グラビア・アイドルなど、好きな人とその理由を語る板です。', 'position' => 13],
 
             // 成人向け。is_adult が true の板は、板の一覧にも sitemap にも出ない。
             // 閲覧には年齢確認を通す必要があり、ページには noindex を付ける。
